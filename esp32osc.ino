@@ -3,6 +3,7 @@
 #define ETH_PHY_POWER 12
 
 #include <ETH.h>
+#include <SPIFFS.h>
 #include <OSCMessage.h>
 
 WiFiUDP udp;
@@ -14,7 +15,6 @@ const unsigned int outPort = 9999;
 
 void WiFiEvent(WiFiEvent_t event)
 {
-  Serial.println("Wifi event received");
   switch (event) {
     case ARDUINO_EVENT_ETH_START:
       Serial.println("ETH Started");
@@ -54,26 +54,6 @@ void WiFiEvent(WiFiEvent_t event)
   }
 }
 
-void testClient(const char * host, uint16_t port)
-{
-  Serial.print("\nconnecting to ");
-  Serial.println(host);
-
-  WiFiClient client;
-  if (!client.connect(host, port)) {
-    Serial.println("connection failed");
-    return;
-  }
-  client.printf("GET / HTTP/1.1\r\nHost: %s\r\n\r\n", host);
-  while (client.connected() && !client.available());
-  while (client.available()) {
-    Serial.write(client.read());
-  }
-
-  Serial.println("closing connection\n");
-  client.stop();
-}
-
 #define BUTTON_PRESSED()  (!digitalRead (34))
 
 void setup()
@@ -84,6 +64,25 @@ void setup()
   WiFi.onEvent(WiFiEvent);
   ETH.begin();
   pinMode (34, INPUT);  // Button
+
+
+  if(!SPIFFS.begin(true)){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+  
+  File file = SPIFFS.open("/index.html");
+  if(!file){
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  
+  Serial.println("File Content:");
+  while(file.available()){
+    Serial.write(file.read());
+  }
+  file.close();
+  
 }
 
 
@@ -105,9 +104,5 @@ void loop()
     msg.empty();
     while (BUTTON_PRESSED());
   }
-  //  if (eth_connected) {
-  //    testClient("google.com", 80);
-  //
-  //  }
   delay(2000);
 }
