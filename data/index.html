@@ -12,33 +12,37 @@
 <h1>esp32osc configuration</h1>
 
 <div class="row mb-3"><div class="input-group col-sm-12">
-	<span class="input-group-text">MAC address</span>
-	<input type="text" readonly class="form-control" id="macAddress" value="00:00:00:00:00:00">
+	<span class="input-group-text">MAC</span>
+	<input type="text" readonly class="form-control" id="macAddress" value="%MAC_ADDRESS%">
+	<span class="input-group-text">IPv4</span>
+	<input type="text" readonly class="form-control" id="ipv4" value="%IPV4%">
+	<span class="input-group-text">Link speed</span>
+	<input type="text" readonly class="form-control" id="linkSpeed" value="%LINK_SPEED%Mbps">
 </div></div>
 
 <form>
 	<div class="row mb-3"><div class="input-group col-sm-12">
 		<span class="input-group-text">UDP listening port</span>
-	  <input type="number" min=1025 max=65535 class="form-control" id="inPort">
+	  <input type="number" min=1025 max=65535 class="form-control" id="inPort" value="%IN_PORT%">
 	</div></div>
 
 	<div class="row mb-3"><div class="input-group col-sm-12">
 		<span class="input-group-text">UDP destination host</span>
-	  <input type="number" min=0 max=255 class="form-control" id="outHost0">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost1">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost2">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost3">
+	  <input type="number" min=0 max=255 class="form-control" id="outHost0" value="%OUT_HOST_0%">
+	  <input type="number" min=0 max=255 class="form-control" id="outHost1" value="%OUT_HOST_1%">
+	  <input type="number" min=0 max=255 class="form-control" id="outHost2" value="%OUT_HOST_2%">
+	  <input type="number" min=0 max=255 class="form-control" id="outHost3" value="%OUT_HOST_3%">
 	</div></div>
 
 	<div class="row mb-3"><div class="input-group col-sm-12">
 		<span class="input-group-text">UDP destination port</span>
-	  <input type="number" min=1025 max=65535 class="form-control" id="outPort">
+	  <input type="number" min=1025 max=65535 class="form-control" id="outPort" value="%OUT_PORT%">
 	</div></div>
 
 	<div class="row mb-3"><div class="input-group col-sm-12">
 		<span class="input-group-text">OSC address</span>
 		<span class="input-group-text">/</span>
-	  <input type="text" class="form-control" id="oscAddress">
+	  <input type="text" class="form-control" id="oscAddress" value="%OSC_ADDRESS%">
 	</div></div>
 
 	<div class="row mb-3"><div class="col-sm-12">
