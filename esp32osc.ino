@@ -22,7 +22,18 @@ static String oscAddress;
 #define SETTINGS_DEFAULT_OUT_HOST IPAddress(192, 168, 1, 28)
 #define SETTINGS_DEFAULT_OSC_ADDRESS String("esp32osc")
 
+#define HTML_INPUT_NAME_IN_PORT "inPort"
+#define HTML_INPUT_NAME_OUT_PORT "outPort"
+#define HTML_INPUT_NAME_OUT_HOST "outHost"
+#define HTML_INPUT_NAME_OUT_HOST_0 "outHost0"
+#define HTML_INPUT_NAME_OUT_HOST_1 "outHost1"
+#define HTML_INPUT_NAME_OUT_HOST_2 "outHost2"
+#define HTML_INPUT_NAME_OUT_HOST_3 "outHost3"
+#define HTML_INPUT_NAME_OSC_ADDRESS "oscAddress"
+const char* PARAM_INPUT_1 = "inPort";
+
 #include <Preferences.h>
+#define PREFERENCES_NAMESPACE_SETTINGS "settings"
 Preferences prefs;
 
 
@@ -49,8 +60,7 @@ void WiFiEvent(WiFiEvent_t event)
       Serial.print(ETH.linkSpeed());
       Serial.println("Mbps");
       eth_connected = true;
-//      udp.begin(WiFi.localIP(), inPort);
-
+      udp.begin(WiFi.localIP(), inPort);
       break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
       Serial.println("ETH Disconnected");
@@ -95,21 +105,28 @@ String processor(const String& var)
   return String();
 }
 
+void dumpSettings() {
+  Serial.println("##### Settings #####");
+  Serial.print("inPort: "); Serial.println(inPort);
+  Serial.print("outPort: "); Serial.println(outPort);
+  Serial.print("outHost: "); Serial.println(outHost);
+  Serial.print("oscAddress: "); Serial.println(oscAddress);
+  Serial.println("####################");
+}
+
 void setup()
 {
   Serial.begin(115200);
   Serial.println("esp32osc starting ...");
 
-  prefs.begin("settings", true);
-  inPort = prefs.getUInt("inPort", SETTINGS_DEFAULT_IN_PORT);
-  outPort = prefs.getUInt("outPort", SETTINGS_DEFAULT_OUT_PORT);
-  outHost = prefs.getULong("outHost", SETTINGS_DEFAULT_OUT_HOST);
-  oscAddress = prefs.getString("oscAddress", SETTINGS_DEFAULT_OSC_ADDRESS);
-
-  Serial.print("inPort: "); Serial.println(inPort);
-  Serial.print("outPort: "); Serial.println(outPort);
-  Serial.print("outHost: "); Serial.println(outHost);
-  Serial.print("oscAddress: "); Serial.println(oscAddress);
+  prefs.begin(PREFERENCES_NAMESPACE_SETTINGS, true);
+  inPort = prefs.getUInt(HTML_INPUT_NAME_IN_PORT, SETTINGS_DEFAULT_IN_PORT);
+  outPort = prefs.getUInt(HTML_INPUT_NAME_OUT_PORT, SETTINGS_DEFAULT_OUT_PORT);
+  outHost = prefs.getULong(HTML_INPUT_NAME_OUT_HOST, SETTINGS_DEFAULT_OUT_HOST);
+  oscAddress = prefs.getString(HTML_INPUT_NAME_OSC_ADDRESS, SETTINGS_DEFAULT_OSC_ADDRESS);
+  prefs.end();
+  
+  dumpSettings();
 
   WiFi.onEvent(WiFiEvent);
   ETH.begin();
@@ -122,6 +139,45 @@ void setup()
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", String(), false, processor);
+  });
+
+  server.on("/", HTTP_POST, [](AsyncWebServerRequest *request){
+    Serial.print("POST request received with parameters: ");
+    Serial.println(request->params());
+    prefs.begin(PREFERENCES_NAMESPACE_SETTINGS, false);
+    if(request->hasParam(HTML_INPUT_NAME_IN_PORT, true)) {
+      AsyncWebParameter* p  = request->getParam(HTML_INPUT_NAME_IN_PORT, true);
+      inPort = p->value().toInt();
+      prefs.putUInt(HTML_INPUT_NAME_IN_PORT, inPort);
+    }
+    if(request->hasParam(HTML_INPUT_NAME_OUT_PORT, true)) {
+      AsyncWebParameter* p  = request->getParam(HTML_INPUT_NAME_OUT_PORT, true);
+      outPort = p->value().toInt();
+      prefs.putUInt(HTML_INPUT_NAME_OUT_PORT, outPort);
+    }
+    if(request->hasParam(HTML_INPUT_NAME_OSC_ADDRESS, true)) {
+      AsyncWebParameter* p  = request->getParam(HTML_INPUT_NAME_OSC_ADDRESS, true);
+      oscAddress = p->value().substring(0, 32);
+      prefs.putString(HTML_INPUT_NAME_OSC_ADDRESS, oscAddress);
+    }
+    if(request->hasParam(HTML_INPUT_NAME_OUT_HOST_0, true)
+      && request->hasParam(HTML_INPUT_NAME_OUT_HOST_1, true)
+      && request->hasParam(HTML_INPUT_NAME_OUT_HOST_2, true)
+      && request->hasParam(HTML_INPUT_NAME_OUT_HOST_3, true)) {
+      AsyncWebParameter* p0 = request->getParam(HTML_INPUT_NAME_OUT_HOST_0, true);
+      AsyncWebParameter* p1 = request->getParam(HTML_INPUT_NAME_OUT_HOST_1, true);
+      AsyncWebParameter* p2 = request->getParam(HTML_INPUT_NAME_OUT_HOST_2, true);
+      AsyncWebParameter* p3 = request->getParam(HTML_INPUT_NAME_OUT_HOST_3, true);
+      outHost = IPAddress(
+        p0->value().toInt(),
+        p1->value().toInt(),
+        p2->value().toInt(),
+        p3->value().toInt());
+      prefs.putULong(HTML_INPUT_NAME_OUT_HOST, outHost);
+    }
+    prefs.end();
+    dumpSettings();
+    request->send(200);
   });
 
   server.begin();
