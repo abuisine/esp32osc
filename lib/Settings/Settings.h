@@ -35,8 +35,6 @@ class Settings: public Printable {
 
 		Settings();
 		virtual size_t printTo(Print& p) const;
-
-		void loadFromPreferences();
 };
 
 #endif

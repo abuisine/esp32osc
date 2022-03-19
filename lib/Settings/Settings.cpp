@@ -1,10 +1,6 @@
 #include "Settings.h"
 
 Settings::Settings() {
-
-}
-
-void Settings::loadFromPreferences() {
   prefs.begin(SETTINGS_PREFERENCES_NAMESPACE, true);
   inPort = prefs.getUInt(SETTINGS_IN_PORT, SETTINGS_DEFAULT_IN_PORT);
   outPort = prefs.getUInt(SETTINGS_OUT_PORT, SETTINGS_DEFAULT_OUT_PORT);
