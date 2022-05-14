@@ -3,7 +3,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "Webadmin.h"
-
+#include "Led.h"
 
 String Webadmin::processor(const String &var)
 {
@@ -115,6 +115,7 @@ void Webadmin::begin() {
 
   server.begin();
   Serial.println("(I) Webserver started");
+  led.bumpStage();
 }
 
 Webadmin webadmin;

@@ -2,6 +2,7 @@
 #include <IPAddress.h>
 #include <ETH.h>
 #include "Network.h"
+#include "Led.h"
 
 void onEvent(WiFiEvent_t event) {
   IPAddress ip;
@@ -18,10 +19,12 @@ void onEvent(WiFiEvent_t event) {
       NET.setReady();
       Serial.print("(I) Network is now ready with IP : ");
       Serial.println(ip);
+      led.bumpStage();
       break;
     case SYSTEM_EVENT_ETH_DISCONNECTED:
       Serial.println("(I) Network is now disconnected");
       NET.setReady(false);
+      led.error();
       break;
     case SYSTEM_EVENT_ETH_STOP:
       NET.setReady(false);
@@ -40,6 +43,7 @@ void Network::begin(uint16_t udpListeningPort) {
   Serial.println("(I) Network start ...");
   WiFi.onEvent(onEvent);
   ETH.begin();
+  led.bumpStage();
 }
 
 uint16_t Network::getUdpListeningPort() {
