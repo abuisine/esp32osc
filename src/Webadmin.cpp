@@ -27,6 +27,18 @@ String Webadmin::processor(const String &var)
     return String(settings.outHost[3]);
   if(var == "OSC_ADDRESS")
     return settings.oscAddress;
+  if(var == "LED_COLOR_0")
+    return '#' + String(settings.ledColor[0], 16);
+  if(var == "LED_COLOR_1")
+    return '#' + String(settings.ledColor[1], 16);
+  if(var == "LED_COLOR_2")
+    return '#' + String(settings.ledColor[2], 16);
+  if(var == "LED_COLOR_3")
+    return '#' + String(settings.ledColor[3], 16);
+  if(var == "LED_COLOR_4")
+    return '#' + String(settings.ledColor[4], 16);
+  if(var == "LED_COLOR_5")
+    return '#' + String(settings.ledColor[5], 16);
   return String();
 }
 
@@ -72,6 +84,30 @@ void Webadmin::begin() {
         p1->value().toInt(),
         p2->value().toInt(),
         p3->value().toInt());
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_0, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_0, true);
+      settings.ledColor[0] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_1, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_1, true);
+      settings.ledColor[1] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_2, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_2, true);
+      settings.ledColor[2] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_3, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_3, true);
+      settings.ledColor[3] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_4, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_4, true);
+      settings.ledColor[4] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_LED_COLOR_5, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_5, true);
+      settings.ledColor[5] = strtol(p->value().substring(1).c_str(), 0, 16);
     }
     settings.persist();
     request->send(200);

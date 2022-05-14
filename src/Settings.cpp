@@ -12,6 +12,13 @@ void Settings::restore() {
   outPort = prefs.getUInt(SETTINGS_OUT_PORT, SETTINGS_DEFAULT_OUT_PORT);
   outHost = prefs.getULong(SETTINGS_OUT_HOST, SETTINGS_DEFAULT_OUT_HOST);
   oscAddress = prefs.getString(SETTINGS_OSC_ADDRESS, SETTINGS_DEFAULT_OSC_ADDRESS);
+  ledColor[0] = prefs.getULong(SETTINGS_LED_COLOR_0, SETTINGS_DEFAULT_LED_COLOR);
+  ledColor[1] = prefs.getULong(SETTINGS_LED_COLOR_1, SETTINGS_DEFAULT_LED_COLOR);
+  ledColor[2] = prefs.getULong(SETTINGS_LED_COLOR_2, SETTINGS_DEFAULT_LED_COLOR);
+  ledColor[3] = prefs.getULong(SETTINGS_LED_COLOR_3, SETTINGS_DEFAULT_LED_COLOR);
+  ledColor[4] = prefs.getULong(SETTINGS_LED_COLOR_4, SETTINGS_DEFAULT_LED_COLOR);
+  ledColor[5] = prefs.getULong(SETTINGS_LED_COLOR_5, SETTINGS_DEFAULT_LED_COLOR);
+
   prefs.end();
   Serial.println("(I) Settings restored");
 }
@@ -25,6 +32,12 @@ void Settings::persist() {
   prefs.putUInt(SETTINGS_OUT_PORT, outPort);
   prefs.putString(SETTINGS_OSC_ADDRESS, oscAddress);
   prefs.putULong(SETTINGS_OUT_HOST, outHost);
+  prefs.putULong(SETTINGS_LED_COLOR_0, ledColor[0]);
+  prefs.putULong(SETTINGS_LED_COLOR_1, ledColor[1]);
+  prefs.putULong(SETTINGS_LED_COLOR_2, ledColor[2]);
+  prefs.putULong(SETTINGS_LED_COLOR_3, ledColor[3]);
+  prefs.putULong(SETTINGS_LED_COLOR_4, ledColor[4]);
+  prefs.putULong(SETTINGS_LED_COLOR_5, ledColor[5]);
   prefs.end();
   Serial.println("(I) Settings persisted");
 }
@@ -41,6 +54,11 @@ size_t Settings::printTo(Print& p) const
 		n += p.println(outHost);
 		n += p.print("oscAddress: ");
 		n += p.println(oscAddress);
+
+    for (int i = 0; i < SETTINGS_LED_COUNT; i++) {
+		  n += p.print("ledColor: ");
+      n += p.println(String(ledColor[i], 16));
+    }
 		n += p.println("####################");
     return n;
 }

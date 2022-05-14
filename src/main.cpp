@@ -4,11 +4,16 @@
 
 #include <Arduino.h>
 #include <ETH.h>
+#include <FastLED.h>
 #include "Settings.h"
 #include "Network.h"
 #include "Webadmin.h"
 
 #define BUTTON_PRESSED()  (!digitalRead (34))
+#define DATA_PIN 13
+#define CLOCK_PIN 14
+
+CRGB leds[SETTINGS_LED_COUNT];
 
 void setup()
 {
@@ -19,9 +24,14 @@ void setup()
   Serial.print(settings);
 
   pinMode (34, INPUT);  // Button
+  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, BGR>(leds, SETTINGS_LED_COUNT);
 
   NET.begin(settings.inPort);
   webadmin.begin();
+
+  leds[0] = CRGB::Blue;
+  leds[0].subtractFromRGB(210);
+  FastLED.show();
 }
 
 void loop()
@@ -42,6 +52,10 @@ void loop()
     // msg.send(network.udp); // send the bytes to the SLIP stream
     // network.udp.endPacket();
     // msg.empty();
+    for (uint8_t i = 0; i < SETTINGS_LED_COUNT; i++) {
+      leds[i] = settings.ledColor[i];
+    }
+    FastLED.show();
 
     while (BUTTON_PRESSED());
   }

@@ -12,6 +12,7 @@
 #define SETTINGS_DEFAULT_OUT_PORT 9999
 #define SETTINGS_DEFAULT_OUT_HOST IPAddress(192, 168, 1, 28)
 #define SETTINGS_DEFAULT_OSC_ADDRESS String("esp32osc")
+#define SETTINGS_DEFAULT_LED_COLOR 0xFF0000
 
 #define SETTINGS_IN_PORT "inPort"
 #define SETTINGS_OUT_PORT "outPort"
@@ -23,6 +24,14 @@
 #define SETTINGS_OUT_HOST_2 "outHost2"
 #define SETTINGS_OUT_HOST_3 "outHost3"
 
+#define SETTINGS_LED_COLOR_0 "ledColor0"
+#define SETTINGS_LED_COLOR_1 "ledColor1"
+#define SETTINGS_LED_COLOR_2 "ledColor2"
+#define SETTINGS_LED_COLOR_3 "ledColor3"
+#define SETTINGS_LED_COLOR_4 "ledColor4"
+#define SETTINGS_LED_COLOR_5 "ledColor5"
+#define SETTINGS_LED_COUNT 6
+
 class Settings: public Printable {
 	private:
 		Preferences prefs;
@@ -32,6 +41,7 @@ class Settings: public Printable {
 		uint16_t outPort;
 		IPAddress outHost;
 		String oscAddress;
+		uint32_t ledColor[SETTINGS_LED_COUNT];
 
 		Settings();
 		void restore();
