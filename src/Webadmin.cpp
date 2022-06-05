@@ -2,6 +2,7 @@
 #include <SPIFFS.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
 #include "Webadmin.h"
 #include "Led.h"
 
@@ -113,6 +114,7 @@ void Webadmin::begin() {
     request->send(200);
   });
 
+  AsyncElegantOTA.begin(&server);
   server.begin();
   Serial.println("(I) Webserver started");
   led.bumpStage();
