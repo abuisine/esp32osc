@@ -76,6 +76,19 @@ void setup()
   webadmin.begin();
 }
 
+void sendOSCMessage(uint8_t id) {
+  String path = "/" + settings.oscAddress + "/" + id;
+  char address[32];
+  path.toCharArray(address, 32);
+
+  OSCMessage msg(address);
+  msg.add(true);
+  NET.udp.beginPacket(settings.outHost, settings.outPort);
+  msg.send(NET.udp); // send the bytes to the SLIP stream
+  NET.udp.endPacket();
+  msg.empty();
+}
+
 void loop()
 {
   Serial.println("I am alive !");
@@ -106,14 +119,7 @@ void loop()
 
   if (buttons[2].pressed) {
     buttons[2].pressed = false;
-    char address[32];
-    settings.oscAddress.toCharArray(address, 32);
-    OSCMessage msg(address);
-    msg.add(64);
-    NET.udp.beginPacket(settings.outHost, settings.outPort);
-    msg.send(NET.udp); // send the bytes to the SLIP stream
-    NET.udp.endPacket();
-    msg.empty();
+    sendOSCMessage(2);
   }
 
 
