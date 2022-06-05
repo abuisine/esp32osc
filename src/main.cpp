@@ -79,6 +79,7 @@ void setup()
 void loop()
 {
   Serial.println("I am alive !");
+  Serial.println((String)"Free mem: " + xPortGetFreeHeapSize());
   Serial.println((String)"Buttons: "
     + buttons[0].lastPress + ", "
     + buttons[1].lastPress + ", "
@@ -87,7 +88,6 @@ void loop()
     + buttons[4].lastPress + ", "
     + buttons[5].lastPress
     );
-
   if (buttons[0].pressed)
   {
     buttons[0].pressed = false;
