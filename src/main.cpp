@@ -11,37 +11,39 @@
 
 uint32_t debouncingDelay = 50000; // 50ms
 
-struct Button {
+struct button {
   uint8_t   pin;
   bool      pressed;
   uint32_t  lastPress; 
 };
 
-volatile struct Button button0 = {15, false, 0};
-volatile struct Button button1 = {16, false, 0};
-volatile struct Button button2 = {32, false, 0};
-volatile struct Button button3 = {33, false, 0};
-volatile struct Button button4 = {34, false, 0};
-volatile struct Button button5 = {36, false, 0};
+volatile struct button buttons[6] = {
+  {15, false, 0},
+  {16, false, 0},
+  {32, false, 0},
+  {33, false, 0},
+  {34, false, 0},
+  {36, false, 0}
+  };
 
 void IRAM_ATTR isr0() {
-  if (micros() - button0.lastPress > debouncingDelay) {
-    button0.pressed = true;
-    button0.lastPress = micros();
+  if (micros() - buttons[0].lastPress > debouncingDelay) {
+    buttons[0].pressed = true;
+    buttons[0].lastPress = micros();
   }
 }
 
 void IRAM_ATTR isr1() {
-  if (micros() - button0.lastPress > debouncingDelay) {
-    button1.pressed = true;
-    button1.lastPress = micros();
+  if (micros() - buttons[0].lastPress > debouncingDelay) {
+    buttons[1].pressed = true;
+    buttons[1].lastPress = micros();
   }
 }
 
 void IRAM_ATTR isr2() {
-  if (micros() - button0.lastPress > debouncingDelay) {
-    button2.pressed = true;
-    button2.lastPress = micros();
+  if (micros() - buttons[0].lastPress > debouncingDelay) {
+    buttons[2].pressed = true;
+    buttons[2].lastPress = micros();
   }
 }
 
@@ -55,19 +57,19 @@ void setup()
 
   led.begin();
 
-  pinMode(button0.pin, INPUT_PULLUP);
-  pinMode(button1.pin, INPUT_PULLUP);
-  pinMode(button2.pin, INPUT_PULLUP);
-  pinMode(button3.pin, INPUT_PULLUP);
-  pinMode(button4.pin, INPUT);
-  pinMode(button5.pin, INPUT_PULLUP);
+  pinMode(buttons[0].pin, INPUT_PULLUP);
+  pinMode(buttons[1].pin, INPUT_PULLUP);
+  pinMode(buttons[2].pin, INPUT_PULLUP);
+  pinMode(buttons[3].pin, INPUT_PULLUP);
+  pinMode(buttons[4].pin, INPUT);
+  pinMode(buttons[5].pin, INPUT_PULLUP);
 
-  attachInterrupt(button0.pin, isr0, FALLING);
-  attachInterrupt(button1.pin, isr1, FALLING);
-  attachInterrupt(button2.pin, isr2, FALLING);
-  attachInterrupt(button3.pin, isr0, FALLING);
-  attachInterrupt(button4.pin, isr1, FALLING);
-  attachInterrupt(button5.pin, isr2, FALLING);
+  attachInterrupt(buttons[0].pin, isr0, FALLING);
+  attachInterrupt(buttons[1].pin, isr1, FALLING);
+  attachInterrupt(buttons[2].pin, isr2, FALLING);
+  attachInterrupt(buttons[3].pin, isr0, FALLING);
+  attachInterrupt(buttons[4].pin, isr1, FALLING);
+  attachInterrupt(buttons[5].pin, isr2, FALLING);
 
   NET.begin(settings.inPort);
   webadmin.begin();
@@ -76,16 +78,18 @@ void setup()
 void loop()
 {
   Serial.println("I am alive !");
-  Serial.println((String)"Button #1: "+ button0.lastPress);
-  Serial.println((String)"Button #2: "+ button1.lastPress);
-  Serial.println((String)"Button #3: "+ button2.lastPress);
-  Serial.println((String)"Button #4: "+ button3.lastPress);
-  Serial.println((String)"Button #5: "+ button4.lastPress);
-  Serial.println((String)"Button #6: "+ button5.lastPress);
+  Serial.println((String)"Buttons: "
+    + buttons[0].lastPress + ", "
+    + buttons[1].lastPress + ", "
+    + buttons[2].lastPress + ", "
+    + buttons[3].lastPress + ", "
+    + buttons[4].lastPress + ", "
+    + buttons[5].lastPress
+    );
 
-  if (button0.pressed)
+  if (buttons[0].pressed)
   {
-    button0.pressed = false;
+    buttons[0].pressed = false;
     if (!NET.isReady()) {
       Serial.println("(E) network not ready");
     } else {
@@ -93,15 +97,8 @@ void loop()
     }
   }
 
-  if (button1.pressed) {
-    button1.pressed = false;
-
-    // OSCMessage msg(dstPath);
-    // msg.add(64);
-    // network.udp.beginPacket(settings.outHost, settings.outPort);
-    // msg.send(network.udp); // send the bytes to the SLIP stream
-    // network.udp.endPacket();
-    // msg.empty();
+  if (buttons[1].pressed) {
+    buttons[1].pressed = false;
     led.applySettings();
     Serial.println("Led settings applied !");
   }
