@@ -2,6 +2,7 @@
 #define MY_NETWORK_H
 
 #include <Arduino.h>
+#include <ETH.h>
 #include <WiFiUdp.h>
 
 class Network {
@@ -15,6 +16,7 @@ class Network {
     Network();
     void begin(uint16_t udpListeningPort);
     uint16_t getUdpListeningPort();
+    IPAddress getIP();
     bool isReady();
     void setReady(bool newReady = true);
 };

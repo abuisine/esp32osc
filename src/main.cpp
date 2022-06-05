@@ -88,6 +88,8 @@ void loop()
     button0.pressed = false;
     if (!NET.isReady()) {
       Serial.println("(E) network not ready");
+    } else {
+      Serial.println((String)"(I) local IP: " + NET.getIP().toString());
     }
   }
 
