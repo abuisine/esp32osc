@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <ETH.h>
+#include <OSCMessage.h>
 #include "Led.h"
 #include "Settings.h"
 #include "Network.h"
@@ -103,5 +104,21 @@ void loop()
     Serial.println("Led settings applied !");
   }
 
-  delay(2000);
+  if (buttons[2].pressed) {
+    buttons[2].pressed = false;
+    char address[32];
+    settings.oscAddress.toCharArray(address, 32);
+    OSCMessage msg(address);
+    msg.add(64);
+    NET.udp.beginPacket(settings.outHost, settings.outPort);
+    msg.send(NET.udp); // send the bytes to the SLIP stream
+    NET.udp.endPacket();
+    msg.empty();
+  }
+
+
+
+
+
+  delay(1000);
 }
