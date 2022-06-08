@@ -18,6 +18,7 @@ void Settings::restore() {
   ledColor[3] = prefs.getULong(SETTINGS_LED_COLOR_3, SETTINGS_DEFAULT_LED_COLOR);
   ledColor[4] = prefs.getULong(SETTINGS_LED_COLOR_4, SETTINGS_DEFAULT_LED_COLOR);
   ledColor[5] = prefs.getULong(SETTINGS_LED_COLOR_5, SETTINGS_DEFAULT_LED_COLOR);
+  buttonDebouncingDelay = prefs.getULong(SETTINGS_BUTTON_DEBOUNCING_DELAY, SETTINGS_DEFAULT_BUTTON_DEBOUNCING_DELAY);
 
   prefs.end();
   Serial.println("(I) Settings restored");
@@ -38,6 +39,7 @@ void Settings::persist() {
   prefs.putULong(SETTINGS_LED_COLOR_3, ledColor[3]);
   prefs.putULong(SETTINGS_LED_COLOR_4, ledColor[4]);
   prefs.putULong(SETTINGS_LED_COLOR_5, ledColor[5]);
+  prefs.putULong(SETTINGS_BUTTON_DEBOUNCING_DELAY, buttonDebouncingDelay);
   prefs.end();
   Serial.println("(I) Settings persisted");
 }
@@ -46,19 +48,15 @@ size_t Settings::printTo(Print& p) const
 {
     size_t n = 0;
     n += p.println("##### Settings #####");
-		n += p.print("inPort: ");
-		n += p.println(inPort);
-		n += p.print("outPort: ");
-		n += p.println(outPort);
-		n += p.print("outHost: ");
-		n += p.println(outHost);
-		n += p.print("oscAddress: ");
-		n += p.println(oscAddress);
+		n += p.println((String)"inPort: " + inPort);
+		n += p.println((String)"outPort: " + outPort);
+		n += p.println((String)"outHost: " + outHost);
+		n += p.println((String)"oscAddress: " + oscAddress);
 
     for (int i = 0; i < SETTINGS_LED_COUNT; i++) {
-		  n += p.print("ledColor: ");
-      n += p.println(String(ledColor[i], 16));
+		  n += p.println((String)"ledColor: " + String(ledColor[i], 16));
     }
+    n += p.println((String)"buttonDebouncingDelay: " + buttonDebouncingDelay);
 		n += p.println("####################");
     return n;
 }

@@ -40,6 +40,8 @@ String Webadmin::processor(const String &var)
     return '#' + String(settings.ledColor[4], 16);
   if(var == "LED_COLOR_5")
     return '#' + String(settings.ledColor[5], 16);
+  if(var == "BUTTON_DEBOUNCING_DELAY")
+    return String(settings.buttonDebouncingDelay);
   return String();
 }
 
@@ -109,6 +111,10 @@ void Webadmin::begin() {
     if(request->hasParam(SETTINGS_LED_COLOR_5, true)) {
       AsyncWebParameter* p  = request->getParam(SETTINGS_LED_COLOR_5, true);
       settings.ledColor[5] = strtol(p->value().substring(1).c_str(), 0, 16);
+    }
+    if(request->hasParam(SETTINGS_BUTTON_DEBOUNCING_DELAY, true)) {
+      AsyncWebParameter* p  = request->getParam(SETTINGS_BUTTON_DEBOUNCING_DELAY, true);
+      settings.buttonDebouncingDelay = p->value().toInt();
     }
     settings.persist();
     request->send(200);

@@ -13,11 +13,13 @@
 #define SETTINGS_DEFAULT_OUT_HOST IPAddress(192, 168, 1, 28)
 #define SETTINGS_DEFAULT_OSC_ADDRESS String("esp32osc")
 #define SETTINGS_DEFAULT_LED_COLOR 0xFF0000
+#define SETTINGS_DEFAULT_BUTTON_DEBOUNCING_DELAY 100 //100ms
 
 #define SETTINGS_IN_PORT "inPort"
 #define SETTINGS_OUT_PORT "outPort"
 #define SETTINGS_OUT_HOST "outHost"
 #define SETTINGS_OSC_ADDRESS "oscAddress"
+#define SETTINGS_BUTTON_DEBOUNCING_DELAY "debounceDelay"
 
 #define SETTINGS_OUT_HOST_0 "outHost0"
 #define SETTINGS_OUT_HOST_1 "outHost1"
@@ -42,6 +44,7 @@ class Settings: public Printable {
 		IPAddress outHost;
 		String oscAddress;
 		uint32_t ledColor[SETTINGS_LED_COUNT];
+		uint32_t buttonDebouncingDelay;
 
 		Settings();
 		void restore();

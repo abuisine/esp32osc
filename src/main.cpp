@@ -4,49 +4,12 @@
 
 #include <Arduino.h>
 #include <ETH.h>
-#include <OSCMessage.h>
 #include "Led.h"
 #include "Settings.h"
 #include "Network.h"
 #include "Webadmin.h"
-
-uint32_t debouncingDelay = 50000; // 50ms
-
-struct button {
-  uint8_t   pin;
-  bool      pressed;
-  uint32_t  lastPress; 
-};
-
-volatile struct button buttons[6] = {
-  {15, false, 0},
-  {16, false, 0},
-  {32, false, 0},
-  {33, false, 0},
-  {34, false, 0},
-  {36, false, 0}
-  };
-
-void IRAM_ATTR isr0() {
-  if (micros() - buttons[0].lastPress > debouncingDelay) {
-    buttons[0].pressed = true;
-    buttons[0].lastPress = micros();
-  }
-}
-
-void IRAM_ATTR isr1() {
-  if (micros() - buttons[0].lastPress > debouncingDelay) {
-    buttons[1].pressed = true;
-    buttons[1].lastPress = micros();
-  }
-}
-
-void IRAM_ATTR isr2() {
-  if (micros() - buttons[0].lastPress > debouncingDelay) {
-    buttons[2].pressed = true;
-    buttons[2].lastPress = micros();
-  }
-}
+#include "OSC.h"
+#include "Buttons.h"
 
 void setup()
 {
@@ -58,52 +21,34 @@ void setup()
 
   led.begin();
 
-  pinMode(buttons[0].pin, INPUT_PULLUP);
-  pinMode(buttons[1].pin, INPUT_PULLUP);
-  pinMode(buttons[2].pin, INPUT_PULLUP);
-  pinMode(buttons[3].pin, INPUT_PULLUP);
-  pinMode(buttons[4].pin, INPUT);
-  pinMode(buttons[5].pin, INPUT_PULLUP);
-
-  attachInterrupt(buttons[0].pin, isr0, FALLING);
-  attachInterrupt(buttons[1].pin, isr1, FALLING);
-  attachInterrupt(buttons[2].pin, isr2, FALLING);
-  attachInterrupt(buttons[3].pin, isr0, FALLING);
-  attachInterrupt(buttons[4].pin, isr1, FALLING);
-  attachInterrupt(buttons[5].pin, isr2, FALLING);
-
   NET.begin(settings.inPort);
   webadmin.begin();
+  BUTTONS.begin();
 }
 
-void sendOSCMessage(uint8_t id) {
-  String path = "/" + settings.oscAddress + "/" + id;
-  char address[32];
-  path.toCharArray(address, 32);
 
-  OSCMessage msg(address);
-  msg.add(true);
-  NET.udp.beginPacket(settings.outHost, settings.outPort);
-  msg.send(NET.udp); // send the bytes to the SLIP stream
-  NET.udp.endPacket();
-  msg.empty();
-}
 
+uint8_t   loopIdx = 0;
+uint16_t  loopDelay = 100;
+uint16_t  loopDebugOffset = 100;
 void loop()
 {
-  Serial.println("I am alive !");
-  Serial.println((String)"Free mem: " + xPortGetFreeHeapSize());
-  Serial.println((String)"Buttons: "
-    + buttons[0].lastPress + ", "
-    + buttons[1].lastPress + ", "
-    + buttons[2].lastPress + ", "
-    + buttons[3].lastPress + ", "
-    + buttons[4].lastPress + ", "
-    + buttons[5].lastPress
-    );
-  if (buttons[0].pressed)
+  if (loopIdx % loopDebugOffset == 0)
   {
-    buttons[0].pressed = false;
+    Serial.println((String)"I am alive !" + micros());
+    // Serial.println((String)"Free mem: " + xPortGetFreeHeapSize());
+    Serial.println((String)"Buttons: "
+      + BUTTONS.button0LastPress + ", "
+      + BUTTONS.button1LastPress + ", "
+      + BUTTONS.button2LastPress + ", "
+      + BUTTONS.button3LastPress + ", "
+      + BUTTONS.button4LastPress + ", "
+      + BUTTONS.button5LastPress
+      );
+  }
+  if (BUTTONS.button0Pressed)
+  {
+    BUTTONS.button0Pressed = false;
     if (!NET.isReady()) {
       Serial.println("(E) network not ready");
     } else {
@@ -111,20 +56,22 @@ void loop()
     }
   }
 
-  if (buttons[1].pressed) {
-    buttons[1].pressed = false;
+  if (BUTTONS.button1Pressed) {
+    BUTTONS.button1Pressed = false;
     led.applySettings();
     Serial.println("Led settings applied !");
   }
 
-  if (buttons[2].pressed) {
-    buttons[2].pressed = false;
-    sendOSCMessage(2);
+  if (BUTTONS.button2Pressed) {
+    BUTTONS.button2Pressed = false;
+    OSC.send(2);
   }
 
+  if (BUTTONS.button3Pressed) {
+    BUTTONS.button3Pressed = false;
+    Serial.print(settings);
+  }
 
-
-
-
-  delay(1000);
+  delay(loopDelay);
+  loopIdx++;
 }
