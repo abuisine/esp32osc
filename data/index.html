@@ -1,83 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <title>esp32osc configuration</title>
 </head>
 <body>
-<div class="container">
-<h1>esp32osc configuration</h1>
 
-<div class="row mb-3"><div class="input-group col-sm-12">
-	<span class="input-group-text">MAC</span>
-	<input type="text" readonly class="form-control" id="macAddress" name="macAddress" value="%MAC_ADDRESS%">
-	<span class="input-group-text">IPv4</span>
-	<input type="text" readonly class="form-control" id="ipv4" name="ipv4" value="%IPV4%">
-	<span class="input-group-text">Link speed</span>
-	<input type="text" readonly class="form-control" id="linkSpeed" name="linkSpeed" value="%LINK_SPEED%Mbps">
-</div></div>
+<table style="position:absolute;top:0;bottom:0;left:0;right:0;height:100%">
+<tr>
+	<th style="width:100px">esp32osc configuration</th>
+	<td rowspan="5" width="100%" height="100%">
+		<iframe name="page" src="/settings" style="height:100%;width:100%;border:none"></iframe>
+	</td>
+</tr>
+<tr><td><a href="/settings" target="page">settings</a></td></tr>
+<tr><td><a href="/webserial" target="page">logs</a></td></tr>
+<tr><td><a href="/update" target="page">upgrade</a></td></tr>
+<tr><td style="height:100%"></td></tr>
+</table>
 
-<form>
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">UDP listening port</span>
-	  <input type="number" min=1025 max=65535 class="form-control" id="inPort" name="inPort" value="%IN_PORT%">
-	</div></div>
-
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">UDP destination host</span>
-	  <input type="number" min=0 max=255 class="form-control" id="outHost0" name="outHost0" value="%OUT_HOST_0%">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost1" name="outHost1" value="%OUT_HOST_1%">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost2" name="outHost2" value="%OUT_HOST_2%">
-	  <input type="number" min=0 max=255 class="form-control" id="outHost3" name="outHost3" value="%OUT_HOST_3%">
-	</div></div>
-
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">UDP destination port</span>
-	  <input type="number" min=1025 max=65535 class="form-control" id="outPort" name="outPort" value="%OUT_PORT%">
-	</div></div>
-
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">OSC address</span>
-		<span class="input-group-text">/</span>
-	  <input type="text" class="form-control" id="oscAddress" name="oscAddress" value="%OSC_ADDRESS%">
-	</div></div>
-
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">Led colors</span>
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor0" name="ledColor0" value="%LED_COLOR_0%" title="Led #1 color">
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor1" name="ledColor1" value="%LED_COLOR_1%" title="Led #2 color">
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor2" name="ledColor2" value="%LED_COLOR_2%" title="Led #3 color">
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor3" name="ledColor3" value="%LED_COLOR_3%" title="Led #4 color">
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor4" name="ledColor4" value="%LED_COLOR_4%" title="Led #5 color">
-		<input type="color" class="form-control form-control-color col-sm-2" id="ledColor5" name="ledColor5" value="%LED_COLOR_5%" title="Led #6 color">
-	</div></div>
-
-	<div class="row mb-3"><div class="input-group col-sm-12">
-		<span class="input-group-text">Button debouncing delay (ms)</span>
-	  <input type="number" min=0 max=10000000 class="form-control" id="debounceDelay" name="debounceDelay" value="%BUTTON_DEBOUNCING_DELAY%">
-	</div></div>
-
-	<div class="row mb-3"><div class="col-sm-12">
-	<button type="submit" class="btn btn-primary">Save</button>
-	</div></div>
-</form>
-
-</div>
-</body>
-<script>
-const form = document.forms[0];
-
-form.addEventListener("submit", e => {
-	e.preventDefault();
-	new FormData(form);
-});
-form.addEventListener("formdata", e => {
-	const data = e.formData;
-	let xhr = new XMLHttpRequest();
-	xhr.open("POST", "/");
-	xhr.send(data);
-});
-</script>
 </html>

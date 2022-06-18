@@ -3,6 +3,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
+#include <WebSerialPro.h>
 #include "Webadmin.h"
 #include "Led.h"
 
@@ -56,10 +57,13 @@ void Webadmin::begin() {
   }
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", String(), false, processor);
+    request->send(SPIFFS, "/index.html");
   });
 
-  server.on("/", HTTP_POST, [](AsyncWebServerRequest *request){
+  server.on("/settings", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/settings.html", String(), false, processor);
+  });
+  server.on("/settings", HTTP_POST, [](AsyncWebServerRequest *request){
     Serial.print("POST request received with parameters: ");
     Serial.println(request->params());
     if(request->hasParam(SETTINGS_IN_PORT, true)) {
@@ -119,8 +123,17 @@ void Webadmin::begin() {
     settings.persist();
     request->send(200);
   });
+  server.on("/restart", HTTP_POST, [](AsyncWebServerRequest *request){
+    Serial.println("(I) Restarting");
+    ESP.restart();
+  });
+  server.on("/clear", HTTP_POST, [](AsyncWebServerRequest *request){
+    Serial.println("(I) Clearing preferences");
+    settings.clear();
+  });
 
   AsyncElegantOTA.begin(&server);
+  WebSerialPro.begin(&server);
   server.begin();
   Serial.println("(I) Webserver started");
   led.bumpStage();

@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <ETH.h>
+#include <WebSerialPro.h>
 #include "Led.h"
 #include "Settings.h"
 #include "Network.h"
@@ -35,7 +36,9 @@ void loop()
 {
   if (loopIdx % loopDebugOffset == 0)
   {
-    Serial.println((String)"I am alive !" + micros());
+    Serial.println((String)"I am alive, " + micros());
+    WebSerialPro.println((String)"I am alive, " + micros());
+
     // Serial.println((String)"Free mem: " + xPortGetFreeHeapSize());
     Serial.println((String)"Buttons: "
       + BUTTONS.button0LastPress + ", "

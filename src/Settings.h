@@ -49,6 +49,7 @@ class Settings: public Printable {
 		Settings();
 		void restore();
 		void persist();
+		void clear();
 		virtual size_t printTo(Print& p) const;
 };
 

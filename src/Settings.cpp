@@ -44,6 +44,10 @@ void Settings::persist() {
   Serial.println("(I) Settings persisted");
 }
 
+void Settings::clear() {
+  prefs.clear();
+}
+
 size_t Settings::printTo(Print& p) const
 {
     size_t n = 0;
