@@ -27,8 +27,6 @@ void setup()
   BUTTONS.begin();
 }
 
-
-
 uint8_t   loopIdx = 0;
 uint16_t  loopDelay = 100;
 uint16_t  loopDebugOffset = 100;
@@ -75,6 +73,12 @@ void loop()
     Serial.print(settings);
   }
 
+  if (BUTTONS.button4Pressed) {
+    BUTTONS.button4Pressed = false;
+    // Serial.println((String)"led effects ... ");
+  }
+
+  led.effects();
   delay(loopDelay);
   loopIdx++;
 }

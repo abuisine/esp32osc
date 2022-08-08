@@ -136,7 +136,7 @@ void Webadmin::begin() {
   WebSerialPro.begin(&server);
   server.begin();
   Serial.println("(I) Webserver started");
-  led.bumpStage();
+  led.setLoadingColor(LED_LOADING_WEBADMIN_COLOR);
 }
 
 Webadmin webadmin;

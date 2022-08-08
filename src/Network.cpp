@@ -18,12 +18,14 @@ void onEvent(WiFiEvent_t event) {
       NET.udp.begin(ip, NET.getUdpListeningPort());
       NET.setReady();
       Serial.println((String)"(I) Network is now ready with IP : " + ip.toString());
-      led.bumpStage();
+      led.setLoadingColor(LED_LOADING_NETWORK_OK_COLOR);
+      led.setDelayedLoading(false, LED_LOADING_NETWORK_OK_DELAY);
       break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
       Serial.println("(I) Network is now disconnected");
       NET.setReady(false);
-      led.error();
+      led.setLoadingColor(LED_LOADING_NETWORK_NOK_COLOR);
+      led.setLoading(true);
       break;
     case ARDUINO_EVENT_ETH_STOP:
       NET.setReady(false);
@@ -43,7 +45,7 @@ void Network::begin(uint16_t udpListeningPort) {
   Serial.println("(I) Network start ...");
   WiFi.onEvent(onEvent);
   ETH.begin();
-  led.bumpStage();
+  led.setLoadingColor(LED_LOADING_NETWORK_NOK_COLOR);
 }
 
 uint16_t Network::getUdpListeningPort() {

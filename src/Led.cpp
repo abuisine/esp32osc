@@ -1,14 +1,18 @@
 #include "Led.h"
 
 Led::Led()
-  : stage(0) {
+  : loadingIdx(0),
+    loading(true),
+    nextLoading(true),
+    loadingColor(LED_LOADING_START_COLOR),
+    nextLoadingWhen(0) {
 }
 
 void Led::begin() {
   FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, SETTINGS_LED_COUNT);
   FastLED.clear();
-  leds[0] = CRGB::Green;
-  leds[0].subtractFromRGB(230);
+  leds[loadingIdx] = loadingColor;
+  // leds[loadingIdx].subtractFromRGB(230);
   FastLED.show();
 }
 
@@ -19,15 +23,48 @@ void Led::applySettings() {
   FastLED.show();
 }
 
-void Led::bumpStage() {
-  leds[stage] = settings.ledColor[stage];
-  FastLED.show();
-  stage++;
+void Led::error() {
+  setLoadingColor(CRGB::Red);
+  setLoading(true);
 }
 
-void Led::error() {
-  leds[0] = CRGB::Red;
+void Led::setDelayedLoading(bool newLoading, uint16_t ms) {
+  effects();
+  nextLoading = newLoading;
+  nextLoadingWhen = micros() / 1000 + ms;
+}
+
+void Led::setLoading(bool newLoading) {
+  effects();
+  loading = newLoading;
+  if (!loading)
+    applySettings();
+}
+
+void Led::effects() {
+  if (nextLoadingWhen != 0 && nextLoadingWhen * 1000 < micros()) {
+    loading = nextLoading;
+    if (!loading)
+      applySettings();
+    nextLoadingWhen = 0;
+  }
+  if (!loading)
+    return;
+  FastLED.clear();
+  leds[abs(loadingIdx - 1)] = loadingColor;
+  leds[abs(loadingIdx - 1) + 3] = loadingColor;
+  // uint8_t lateIdx1 = (loadingIdx + LED_LOADING_IDX_SIZE - 1) % LED_LOADING_IDX_SIZE;
+  // leds[lateIdx1] = CRGB::Red;
+  // leds[lateIdx1].subtractFromRGB(235);
+  // uint8_t lateIdx2 = (loadingIdx + LED_LOADING_IDX_SIZE - 2) % LED_LOADING_IDX_SIZE;
+  // leds[lateIdx2] = CRGB::Black;
+
   FastLED.show();
+  loadingIdx = (loadingIdx + 1) % 4;
+}
+
+void Led::setLoadingColor(CRGB color) {
+  loadingColor = color;
 }
 
 Led led;
