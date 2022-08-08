@@ -10,6 +10,7 @@ Led::Led()
 
 void Led::begin() {
   FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, SETTINGS_LED_COUNT);
+  FastLED.setCorrection(settings.colorCorrect);
   FastLED.clear();
   leds[loadingIdx] = loadingColor;
   // leds[loadingIdx].subtractFromRGB(230);
@@ -17,6 +18,7 @@ void Led::begin() {
 }
 
 void Led::applySettings() {
+  FastLED.setCorrection(settings.colorCorrect);
   for (uint8_t i = 0; i < SETTINGS_LED_COUNT; i++) {
     leds[i] = settings.ledColor[i];
   }

@@ -14,6 +14,7 @@
 #define SETTINGS_DEFAULT_OSC_ADDRESS String("esp32osc")
 #define SETTINGS_DEFAULT_LED_COLOR 0xFF0000
 #define SETTINGS_DEFAULT_BUTTON_DEBOUNCING_DELAY 100 //100ms
+#define SETTINGS_DEFAULT_COLOR_CORRECT 0xFFB0F0
 
 #define SETTINGS_IN_PORT "inPort"
 #define SETTINGS_OUT_PORT "outPort"
@@ -34,6 +35,8 @@
 #define SETTINGS_LED_COLOR_5 "ledColor5"
 #define SETTINGS_LED_COUNT 6
 
+#define SETTINGS_COLOR_CORRECT "colorCorrect"
+
 class Settings: public Printable {
 	private:
 		Preferences prefs;
@@ -44,6 +47,7 @@ class Settings: public Printable {
 		IPAddress outHost;
 		String oscAddress;
 		uint32_t ledColor[SETTINGS_LED_COUNT];
+		uint32_t colorCorrect;
 		uint32_t buttonDebouncingDelay;
 
 		Settings();

@@ -18,6 +18,7 @@ void Settings::restore() {
   ledColor[3] = prefs.getULong(SETTINGS_LED_COLOR_3, SETTINGS_DEFAULT_LED_COLOR);
   ledColor[4] = prefs.getULong(SETTINGS_LED_COLOR_4, SETTINGS_DEFAULT_LED_COLOR);
   ledColor[5] = prefs.getULong(SETTINGS_LED_COLOR_5, SETTINGS_DEFAULT_LED_COLOR);
+  colorCorrect = prefs.getULong(SETTINGS_COLOR_CORRECT, SETTINGS_DEFAULT_COLOR_CORRECT);
   buttonDebouncingDelay = prefs.getULong(SETTINGS_BUTTON_DEBOUNCING_DELAY, SETTINGS_DEFAULT_BUTTON_DEBOUNCING_DELAY);
 
   prefs.end();
@@ -39,6 +40,7 @@ void Settings::persist() {
   prefs.putULong(SETTINGS_LED_COLOR_3, ledColor[3]);
   prefs.putULong(SETTINGS_LED_COLOR_4, ledColor[4]);
   prefs.putULong(SETTINGS_LED_COLOR_5, ledColor[5]);
+  prefs.putULong(SETTINGS_COLOR_CORRECT, colorCorrect);
   prefs.putULong(SETTINGS_BUTTON_DEBOUNCING_DELAY, buttonDebouncingDelay);
   prefs.end();
   Serial.println("(I) Settings persisted");
@@ -60,6 +62,7 @@ size_t Settings::printTo(Print& p) const
     for (int i = 0; i < SETTINGS_LED_COUNT; i++) {
 		  n += p.println((String)"ledColor: " + String(ledColor[i], 16));
     }
+		n += p.println((String)"colorCorrect: " + String(colorCorrect, 16));
     n += p.println((String)"buttonDebouncingDelay: " + buttonDebouncingDelay);
 		n += p.println("####################");
     return n;

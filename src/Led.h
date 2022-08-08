@@ -33,6 +33,7 @@ class Led {
     void setLoadingColor(CRGB);
     void setLoading(bool);
     void setDelayedLoading(bool, uint16_t);
+    void setColorCorrection(uint32_t);
 };
 
 extern Led led;
