@@ -20,5 +20,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: debug
+        run: |
+          pwd
+          env
       - name: PlatformIO Run
         uses: karniv00l/platformio-run-action@0.1.0
