@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: debug
         run: |
-          pwd
-          env
+          ls /home/runner/work/esp32osc/esp32osc
+          cat /home/runner/work/esp32osc/esp32osc/platformio.ini
       - name: PlatformIO Run
         uses: karniv00l/platformio-run-action@0.1.0
