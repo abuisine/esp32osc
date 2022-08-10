@@ -53,8 +53,7 @@ void Led::effects() {
   if (!loading)
     return;
   FastLED.clear();
-  leds[abs(loadingIdx - 1)] = loadingColor;
-  leds[abs(loadingIdx - 1) + 3] = loadingColor;
+  leds[loadingIdx] = loadingColor;
   // uint8_t lateIdx1 = (loadingIdx + LED_LOADING_IDX_SIZE - 1) % LED_LOADING_IDX_SIZE;
   // leds[lateIdx1] = CRGB::Red;
   // leds[lateIdx1].subtractFromRGB(235);
@@ -62,7 +61,7 @@ void Led::effects() {
   // leds[lateIdx2] = CRGB::Black;
 
   FastLED.show();
-  loadingIdx = (loadingIdx + 1) % 4;
+  loadingIdx = (loadingIdx + 1) % SETTINGS_LED_COUNT;
 }
 
 void Led::setLoadingColor(CRGB color) {

@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <ETH.h>
 #include <WebSerialPro.h>
+// #include <ArduinoOTA.h>
 #include "Led.h"
 #include "Settings.h"
 #include "Network.h"
@@ -37,6 +38,12 @@ void loop()
     Serial.println((String)"I am alive, " + micros());
     WebSerialPro.println((String)"I am alive, " + micros());
 
+    if (!NET.isReady()) {
+      Serial.println("(E) network not ready");
+    } else {
+      Serial.println((String)"(I) local IP: " + NET.getIP().toString());
+    }
+
     // Serial.println((String)"Free mem: " + xPortGetFreeHeapSize());
     Serial.println((String)"Buttons: "
       + BUTTONS.button0LastPress + ", "
@@ -47,20 +54,15 @@ void loop()
       + BUTTONS.button5LastPress
       );
   }
-  if (BUTTONS.button0Pressed)
-  {
+
+  if (BUTTONS.button0Pressed) {
     BUTTONS.button0Pressed = false;
-    if (!NET.isReady()) {
-      Serial.println("(E) network not ready");
-    } else {
-      Serial.println((String)"(I) local IP: " + NET.getIP().toString());
-    }
+    OSC.send(1);
   }
 
   if (BUTTONS.button1Pressed) {
     BUTTONS.button1Pressed = false;
-    led.applySettings();
-    Serial.println("Led settings applied !");
+    OSC.send(1);
   }
 
   if (BUTTONS.button2Pressed) {
@@ -70,12 +72,17 @@ void loop()
 
   if (BUTTONS.button3Pressed) {
     BUTTONS.button3Pressed = false;
-    Serial.print(settings);
+    OSC.send(3);
   }
 
   if (BUTTONS.button4Pressed) {
     BUTTONS.button4Pressed = false;
-    // Serial.println((String)"led effects ... ");
+    OSC.send(4);
+  }
+
+  if (BUTTONS.button5Pressed) {
+    BUTTONS.button5Pressed = false;
+    OSC.send(5);
   }
 
   led.effects();
