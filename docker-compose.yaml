@@ -1,0 +1,34 @@
+version: '3.4'
+services:
+  firmware:
+    image: infinitecoding/platformio-for-ci
+    working_dir: /opt
+    volumes:
+      - build:/opt/
+      - ./src:/opt/src/
+      - ./data:/opt/data/
+      - ./platformio.ini:/opt/platformio.ini
+      - ./ssh.config:/root/.ssh/config
+      - ./webserial:/root/.ssh/id_rsa
+    tty: true
+    command:
+      - pio
+      - run
+  filesystem:
+    image: infinitecoding/platformio-for-ci
+    working_dir: /opt
+    volumes:
+      - build:/opt/
+      - ./src:/opt/src/
+      - ./data:/opt/data/
+      - ./platformio.ini:/opt/platformio.ini
+      - ./ssh.config:/root/.ssh/config
+      - ./webserial:/root/.ssh/id_rsa
+    tty: true
+    command:
+      - pio
+      - run
+      - -t
+      - buildfs
+volumes:
+  build:
