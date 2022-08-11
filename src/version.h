@@ -1,6 +1,5 @@
-#ifndef MY_VERSION_H
-#define MY_VERSION_H
-
+#ifndef VERSION
 #define VERSION "0.0.0"
-
 #endif
+
+#pragma message VERSION

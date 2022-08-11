@@ -3,6 +3,8 @@ services:
   firmware:
     image: infinitecoding/platformio-for-ci
     working_dir: /opt
+    environment:
+      - VERSION=0.0.0
     volumes:
       - platformio:/root/.platformio
       - build:/opt/
