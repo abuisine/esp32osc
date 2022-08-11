@@ -4,26 +4,28 @@ services:
     image: infinitecoding/platformio-for-ci
     working_dir: /opt
     volumes:
+      - platformio:/root/.platformio
       - build:/opt/
       - ./src:/opt/src/
       - ./data:/opt/data/
+      - ./lib:/opt/lib/
       - ./platformio.ini:/opt/platformio.ini
-      - ./ssh.config:/root/.ssh/config
-      - ./webserial:/root/.ssh/id_rsa
     tty: true
     command:
       - pio
       - run
+      - -t
+      - buildprog
   filesystem:
     image: infinitecoding/platformio-for-ci
     working_dir: /opt
     volumes:
+      - platformio:/root/.platformio
       - build:/opt/
       - ./src:/opt/src/
       - ./data:/opt/data/
+      - ./lib:/opt/lib/
       - ./platformio.ini:/opt/platformio.ini
-      - ./ssh.config:/root/.ssh/config
-      - ./webserial:/root/.ssh/id_rsa
     tty: true
     command:
       - pio
@@ -31,4 +33,5 @@ services:
       - -t
       - buildfs
 volumes:
+  platformio:
   build:
