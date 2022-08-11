@@ -42,7 +42,7 @@ jobs:
       run: |
         pio run -e ${{ env.board }} -t buildprog
     - name: Build filesystem
-      uses: karniv00l/platformio-run-action@0.1.0
+      shell: bash
       run: |
         pio run -e ${{ env.board }} -t buildfs
     - name: Bump version and push tag
