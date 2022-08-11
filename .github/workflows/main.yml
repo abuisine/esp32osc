@@ -6,8 +6,11 @@ on:
 
   workflow_dispatch:
 
+env:
+  board: esp32-poe
+
 jobs:
-  build:
+  build_and_release:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +32,4 @@ jobs:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
         body: ${{ steps.tag_version.outputs.changelog }}
+        artifacts: ${{ github.workspace }}/.pio/build/${{ env.board }}/*.bin
