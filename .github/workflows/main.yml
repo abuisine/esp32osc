@@ -19,12 +19,12 @@ jobs:
       with:
         ssh-key: ${{ secrets.WEBSERIALPRO_SSH_KEY }}
         submodules: true
-    - name: PlatformIO Run
+    - name: Build firmware
       uses: karniv00l/platformio-run-action@0.1.0
       with:
         environments: ${{ env.board }}
         targets: buildprog
-    - name: PlatformIO Run
+    - name: Build filesystem
       uses: karniv00l/platformio-run-action@0.1.0
       with:
         environments: ${{ env.board }}
