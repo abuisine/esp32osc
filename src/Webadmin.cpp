@@ -6,6 +6,7 @@
 #include <WebSerialPro.h>
 #include "Webadmin.h"
 #include "Led.h"
+#include "version.h"
 
 String Webadmin::processor(const String &var)
 {
@@ -15,6 +16,8 @@ String Webadmin::processor(const String &var)
     return ETH.localIP().toString();
   if(var == "LINK_SPEED")
     return String(ETH.linkSpeed());
+  if(var == "VERSION")
+    return VERSION;
   if(var == "IN_PORT")
     return String(settings.inPort); 
   if(var == "OUT_PORT")

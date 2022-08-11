@@ -6,6 +6,7 @@
 #include <ETH.h>
 #include <WebSerialPro.h>
 // #include <ArduinoOTA.h>
+#include "version.h"
 #include "Led.h"
 #include "Settings.h"
 #include "Network.h"
@@ -16,7 +17,7 @@
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("Esp32osc starting ...");
+  Serial.println((String)"Esp32osc v" + VERSION + " starting ...");
 
   settings.restore();
   Serial.print(settings);
