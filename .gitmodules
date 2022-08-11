@@ -1,0 +1,3 @@
+[submodule "lib/webserialpro"]
+	path = lib/webserialpro
+	url = https://github.com/abuisine/webserialpro.git
