@@ -37,8 +37,16 @@ jobs:
       with:
         ssh-key: ${{ secrets.WEBSERIALPRO_SSH_KEY }}
         submodules: true
+    - name: Calculate version
+      id: tag_version_dryrun
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        dry_run: true
     - name: Build firmware
       shell: bash
+      env:
+        VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
       run: |
         pio run -e ${{ env.board }} -t buildprog
     - name: Build filesystem
