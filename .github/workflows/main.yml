@@ -14,21 +14,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-platformio
+    - name: Set up Python
+      uses: actions/setup-python@v4
+    - name: Install PlatformIO
+      shell: bash
+      run: |
+        pip install --upgrade platformio
+    - name: Checkout project
       uses: actions/checkout@v3
       with:
         ssh-key: ${{ secrets.WEBSERIALPRO_SSH_KEY }}
         submodules: true
     - name: Build firmware
-      uses: karniv00l/platformio-run-action@0.1.0
-      with:
-        environments: ${{ env.board }}
-        targets: buildprog
+      shell: bash
+      run: |
+        pio run -e ${{ env.board }} -t buildprog
     - name: Build filesystem
       uses: karniv00l/platformio-run-action@0.1.0
-      with:
-        environments: ${{ env.board }}
-        targets: buildfs
+      run: |
+        pio run -e ${{ env.board }} -t buildfs
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
