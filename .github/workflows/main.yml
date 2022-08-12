@@ -1,4 +1,4 @@
-name: Platformio CI
+name: Release esp32osc
 
 on:
   push:
@@ -14,26 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # - name: Cache pip
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: ~/.cache/pip
-    #     key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-platformio
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10' 
+        python-version: '3.10'
+        cache: 'pip'
     - name: Install PlatformIO
-      shell: bash
-      run: |
-        pip install --upgrade platformio
+      run: pip install --upgrade platformio
     - name: Checkout project
       uses: actions/checkout@v3
       with:
@@ -45,22 +32,34 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         dry_run: true
+    - name: Cache PlatformIO platform and tools
+      id: platformio
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-platformio
+    - name: Cache PlatformIO project dependencies
+      id: pio-libdeps
+      uses: actions/cache@v3
+      with:
+        path: .pio/libdeps/
+        key: ${{ runner.os }}-pio-libdeps
     - name: Install Platformio project dependencies
-      # if: steps.cache-primes.outputs.cache-hit != 'true'
+      if: steps.platformio.outputs.cache-hit != 'true' || steps.pio-libdeps.outputs.cache-hit != 'true'
       run: pio pkg install
     - name: Build firmware
-      shell: bash
       env:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
       run: pio run -e ${{ env.board }} -t buildprog
-    - uses: actions/upload-artifact@v3
+    - name: Upload firmware
+      uses: actions/upload-artifact@v3
       with:
         name: firmware
         path: .pio/build/${{ env.board }}/firmware.bin
     - name: Build filesystem
-      shell: bash
       run: pio run -e ${{ env.board }} -t buildfs
-    - uses: actions/upload-artifact@v3
+    - name: Upload filesystem
+      uses: actions/upload-artifact@v3
       with:
         name: filesystem
         path: .pio/build/${{ env.board }}/spiffs.bin
@@ -75,4 +74,4 @@ jobs:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
         body: ${{ steps.tag_version.outputs.changelog }}
-        artifacts: ${{ github.workspace }}/.pio/build/${{ env.board }}/*.bin
+        artifacts: .pio/build/${{ env.board }}/firmware.bin,.pio/build/${{ env.board }}/spiffs.bin
