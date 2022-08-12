@@ -61,6 +61,7 @@ jobs:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
       run: |
         pio run -e ${{ env.board }} -t buildprog
+        pio run -e ${{ env.board }} -t buildfs
         echo "::set-output name=file::.pio/build/$board/firmware.bin"
     - name: Upload firmware
       uses: actions/upload-artifact@v3
