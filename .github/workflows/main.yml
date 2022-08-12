@@ -71,12 +71,12 @@ jobs:
     - name: Upload firmware
       uses: actions/upload-artifact@v3
       with:
-        name: firmware
+        name: firmware-${{ steps.tag_version_dryrun.outputs.new_tag }}
         path: ${{ steps.binaries.outputs.firmware }}
     - name: Upload filesystem
       uses: actions/upload-artifact@v3
       with:
-        name: filesystem
+        name: filesystem-${{ steps.tag_version_dryrun.outputs.new_tag }}
         path: ${{ steps.binaries.outputs.filesystem }}
     - name: Bump version and push tag
       id: tag_version
