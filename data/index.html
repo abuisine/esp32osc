@@ -5,17 +5,20 @@
 </head>
 <body>
 
-<table style="position:absolute;top:0;bottom:0;left:0;right:0;height:100%">
-<tr>
-	<th style="width:100px">esp32osc configuration</th>
-	<td rowspan="5" width="100%" height="100%">
-		<iframe name="page" src="/settings" style="height:100%;width:100%;border:none"></iframe>
+<table style="position:absolute;top:0;bottom:0;left:0;right:0;height:100%;width:100%">
+<tr width="100%">
+	<td width="50%" height="50%">
+		<iframe src="/settings" style="height:100%;width:100%;border:none"></iframe>
+	</td>
+	<td width="50%" height="50%">
+		<iframe src="/update" style="height:100%;width:100%;border:none"></iframe>
 	</td>
 </tr>
-<tr><td><a href="/settings" target="page">settings</a></td></tr>
-<tr><td><a href="/webserial" target="page">logs</a></td></tr>
-<tr><td><a href="/update" target="page">upgrade</a></td></tr>
-<tr><td style="height:100%"></td></tr>
+<tr>
+	<td colspan="2" height="50%">
+		<iframe src="/webserial" style="height:100%;width:100%;border:none"></iframe>
+	</td>
+</tr>
 </table>
 
 </html>
