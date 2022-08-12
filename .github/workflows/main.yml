@@ -55,31 +55,25 @@ jobs:
     - name: Install Platformio project dependencies
       if: steps.platformio.outputs.cache-hit != 'true' || steps.pio-libdeps.outputs.cache-hit != 'true'
       run: pio pkg install
-    - name: Build firmware
-      id: build-firmware
+    - name: Build firmware and filesystem
+      id: binaries
       env:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
       run: |
         pio run -e ${{ env.board }} -t buildprog
+        echo "::set-output name=firmware::.pio/build/$board/firmware.bin"
         pio run -e ${{ env.board }} -t buildfs
-        echo "::set-output name=file::.pio/build/$board/firmware.bin"
+        echo "::set-output name=filesystem::.pio/build/$board/spiffs.bin"
     - name: Upload firmware
       uses: actions/upload-artifact@v3
       with:
         name: firmware
-        path: ${{ steps.build-firmware.outputs.file }}
-    - name: Build filesystem
-      id: build-filesystem
-      run: |
-        ls .pio/build/$board/
-        pio run -e ${{ env.board }} -t buildfs
-        echo "::set-output name=file::.pio/build/$board/spiffs.bin"
-        ls .pio/build/$board/
+        path: ${{ steps.binaries.outputs.firmware }}
     - name: Upload filesystem
       uses: actions/upload-artifact@v3
       with:
         name: filesystem
-        path: ${{ steps.build-filesystem.outputs.file }}
+        path: ${{ steps.binaries.outputs.filesystem }}
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
