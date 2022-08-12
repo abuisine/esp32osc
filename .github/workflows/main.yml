@@ -56,21 +56,28 @@ jobs:
       if: steps.platformio.outputs.cache-hit != 'true' || steps.pio-libdeps.outputs.cache-hit != 'true'
       run: pio pkg install
     - name: Build firmware
+      id: build-firmware
       env:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
-      run: pio run -e ${{ env.board }} -t buildprog
+      run: |
+        pio run -e ${{ env.board }} -t buildprog
+        echo "::set-output name=file::.pio/build/$board/firmware.bin"
     - name: Upload firmware
       uses: actions/upload-artifact@v3
       with:
         name: firmware
-        path: .pio/build/${{ env.board }}/firmware.bin
+        path: ${{ steps.build-firmware.outputs.file }}
     - name: Build filesystem
-      run: pio run -e ${{ env.board }} -t buildfs
+      id: build-filesystem
+      run: |
+        ls .pio/build/$board/
+        pio run -e ${{ env.board }} -t buildfs
+        echo "::set-output name=file::.pio/build/$board/spiffs.bin"
     - name: Upload filesystem
       uses: actions/upload-artifact@v3
       with:
         name: filesystem
-        path: .pio/build/${{ env.board }}/spiffs.bin
+        path: ${{ steps.build-filesystem.outputs.file }}
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
@@ -82,4 +89,5 @@ jobs:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
         body: ${{ steps.tag_version.outputs.changelog }}
-        artifacts: .pio/build/${{ env.board }}/firmware.bin,.pio/build/${{ env.board }}/spiffs.bin
+        artifacts: ${{ steps.build-firmware.outputs.file }},${{ steps.build-filesystem.outputs.file }}
+        artifactErrorsFailBuild: true
