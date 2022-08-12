@@ -28,7 +28,7 @@ jobs:
         key: ${{ runner.os }}-platformio-install
     - name: Install PlatformIO
       if: steps.platformio-install.outputs.cache-hit != 'true'
-      run: pip install --upgrade platformio
+      run: pip install --user --upgrade platformio
     - name: Checkout project
       uses: actions/checkout@v3
       with:
