@@ -73,6 +73,7 @@ jobs:
         ls .pio/build/$board/
         pio run -e ${{ env.board }} -t buildfs
         echo "::set-output name=file::.pio/build/$board/spiffs.bin"
+        ls .pio/build/$board/
     - name: Upload filesystem
       uses: actions/upload-artifact@v3
       with:
