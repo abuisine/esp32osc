@@ -14,10 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+
     - name: Set up job
       run: echo $HOME/.local/bin >> $GITHUB_PATH
     - name: Cache PlatformIO installation
@@ -26,6 +23,11 @@ jobs:
       with:
         path: ~/.local/
         key: ${{ runner.os }}-platformio-install
+    - name: Set up Python
+      if: steps.platformio-install.outputs.cache-hit != 'true'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
     - name: Install PlatformIO
       if: steps.platformio-install.outputs.cache-hit != 'true'
       run: pip install --user --upgrade platformio
@@ -68,16 +70,13 @@ jobs:
         done
         echo "::set-output name=firmware::firmware_$VERSION.bin"
         echo "::set-output name=filesystem::spiffs_$VERSION.bin"
-    - name: Upload firmware
+    - name: Upload binaries
       uses: actions/upload-artifact@v3
       with:
-        name: firmware-${{ steps.tag_version_dryrun.outputs.new_tag }}
-        path: ${{ steps.binaries.outputs.firmware }}
-    - name: Upload filesystem
-      uses: actions/upload-artifact@v3
-      with:
-        name: filesystem-${{ steps.tag_version_dryrun.outputs.new_tag }}
-        path: ${{ steps.binaries.outputs.filesystem }}
+        name: binaries-${{ steps.tag_version_dryrun.outputs.new_tag }}
+        path: |
+          ${{ steps.binaries.outputs.firmware }}
+          ${{ steps.binaries.outputs.filesystem }}
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
