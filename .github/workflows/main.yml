@@ -61,9 +61,13 @@ jobs:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
       run: |
         pio run -e ${{ env.board }} -t buildprog
-        echo "::set-output name=firmware::.pio/build/$board/firmware.bin"
         pio run -e ${{ env.board }} -t buildfs
-        echo "::set-output name=filesystem::.pio/build/$board/spiffs.bin"
+        for file in firmware.bin spiffs.bin
+        do
+          mv .pio/build/$board/$file ${file%.bin}_$VERSION.bin
+        done
+        echo "::set-output name=firmware::firmware_$VERSION.bin"
+        echo "::set-output name=filesystem::spiffs_$VERSION.bin"
     - name: Upload firmware
       uses: actions/upload-artifact@v3
       with:
