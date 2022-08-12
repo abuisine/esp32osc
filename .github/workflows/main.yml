@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+    # - name: Cache pip
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/.cache/pip
+    #     key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-pip-
     - name: Cache PlatformIO
       uses: actions/cache@v3
       with:
@@ -28,6 +28,8 @@ jobs:
         key: ${{ runner.os }}-platformio
     - name: Set up Python
       uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
     - name: Install PlatformIO
       shell: bash
       run: |
@@ -43,16 +45,25 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         dry_run: true
+    - name: Install Platformio project dependencies
+      # if: steps.cache-primes.outputs.cache-hit != 'true'
+      run: pio pkg install
     - name: Build firmware
       shell: bash
       env:
         VERSION: ${{ steps.tag_version_dryrun.outputs.new_tag }}
-      run: |
-        pio run -e ${{ env.board }} -t buildprog
+      run: pio run -e ${{ env.board }} -t buildprog
+    - uses: actions/upload-artifact@v3
+      with:
+        name: firmware
+        path: .pio/build/${{ env.board }}/firmware.bin
     - name: Build filesystem
       shell: bash
-      run: |
-        pio run -e ${{ env.board }} -t buildfs
+      run: pio run -e ${{ env.board }} -t buildfs
+    - uses: actions/upload-artifact@v3
+      with:
+        name: filesystem
+        path: .pio/build/${{ env.board }}/spiffs.bin
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
