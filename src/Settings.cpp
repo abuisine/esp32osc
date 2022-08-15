@@ -1,3 +1,4 @@
+#include <SPIFFS.h>
 #include "Settings.h"
 
 Settings::Settings() {
@@ -22,6 +23,20 @@ void Settings::restore() {
   buttonDebouncingDelay = prefs.getULong(SETTINGS_BUTTON_DEBOUNCING_DELAY, SETTINGS_DEFAULT_BUTTON_DEBOUNCING_DELAY);
 
   prefs.end();
+
+  filesystemVersion = "";
+  if(SPIFFS.begin(true)){
+    File fsVersionFile = SPIFFS.open("/VERSION", "r");
+    if(!fsVersionFile) {
+      Serial.println("Not able to read version on filesystem");
+    } else {
+      while (fsVersionFile.available())
+        filesystemVersion += (char)fsVersionFile.read();
+      Serial.println((String)"Filesystem version: " + filesystemVersion);
+      fsVersionFile.close();
+    }
+  }
+
   Serial.println("(I) Settings restored");
 }
 
@@ -64,6 +79,7 @@ size_t Settings::printTo(Print& p) const
     }
 		n += p.println((String)"colorCorrect: " + String(colorCorrect, 16));
     n += p.println((String)"buttonDebouncingDelay: " + buttonDebouncingDelay);
+    n += p.println((String)"filesystemVersion: " + filesystemVersion);
 		n += p.println("####################");
     return n;
 }

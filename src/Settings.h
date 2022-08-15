@@ -42,6 +42,7 @@ class Settings: public Printable {
 		Preferences prefs;
 
 	public:
+		String filesystemVersion;
 		uint16_t inPort;
 		uint16_t outPort;
 		IPAddress outHost;

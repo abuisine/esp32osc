@@ -18,6 +18,8 @@ String Webadmin::processor(const String &var)
     return String(ETH.linkSpeed());
   if(var == "VERSION")
     return VERSION;
+  if(var == "FS_VERSION")
+    return settings.filesystemVersion;
   if(var == "IN_PORT")
     return String(settings.inPort); 
   if(var == "OUT_PORT")
